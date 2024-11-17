@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Data</title>
+    <link rel="stylesheet" href="{% static 'sales/style.css' %}">
+    <!-- Include Chart.js for graphical representation -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Styling the body with gradient background */
+        body {
+            background: #35dc9b;
+            background: linear-gradient(to bottom, #35dc9b, #3857af);
+            display: flex;
+            flex-direction: column;
+            flex-grow: 0;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        /* Styling for the main header */
+        h1 {
+            margin: 0 auto 40px;
+            color: #fff;
+            font: 20px Helvetica;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        /* Styling for the total sales section */
+        h3 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Styling for the product-specific sales section */
+        #product-sales {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        #product-sales h4 {
+            font-weight: bold;
+        }
+
+        /* Styling for the buttons */
+        button {
+            background-color: #1aaf75;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #109f67;
+        }
+
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Styling for the chart */
+        #salesChart {
+            margin-top: 40px;
+            max-width: 100%;
+        }
+
+        /* Container to align the page content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Flexbox for button layout */
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>User Data</h1>
+
+        <!-- Total Sales -->
+        <h3>Total Sales: <span id="total-sales">{{ total_sales|default:"0" }}</span></h3>
+
+        <!-- Product-specific Sales -->
+        <div>
+            <h4>Product-Specific Sales:</h4>
+            <div class="button-container">
+                {% if products %}
+                    {% for product in products %}
+                        <button onclick="showProductSales('{{ product.name }}')">{{ product.name }}</button>
+                    {% endfor %}
+                {% else %}
+                    <p>No products available.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="product-sales">
+            <h4>Total Sales for <span id="product-name"></span>: <span id="sales-amount"></span></h4>
+        </div>
+
+        <!-- Graphical Representation -->
+        <canvas id="salesChart" width="400" height="200"></canvas>
+    </div>
+
+    <script>
+        // Parse the serialized data from the server
+        const productData = JSON.parse('{{ product_data|safe }}');
+    
+        // Extract product names and total costs
+        const productNames = productData.map(item => item.name);
+        const productSales = productData.map(item => item.total_cost);
+    
+        // Create the bar chart
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: productNames,
+                datasets: [{
+                    label: 'Total Sales',
+                    data: productSales,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Function to display product-specific sales
+        function showProductSales(productName) {
+            const product = productData.find(p => p.name === productName);
+            if (product) {
+                document.getElementById('product-name').textContent = productName;
+                document.getElementById('sales-amount').textContent = product.total_cost;
+            }
+        }
+    </script>
+</body>
+</html>

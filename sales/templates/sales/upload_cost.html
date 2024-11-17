@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Cost File</title>
+    <style>
+        body {
+          background: #35dc9b;
+          background: linear-gradient(to bottom, #35dc9b, #3857af);
+          display: flex;
+          flex-direction: column;
+          flex-grow: 0;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          margin: 0;
+        }
+
+        h1 {
+          margin: 0 auto 40px;
+          color: #fff;
+          font: 20px Helvetica, Arial, sans-serif;
+          text-transform: uppercase;
+          letter-spacing: 3px;
+        }
+
+        form {
+          text-align: center;
+        }
+
+        form label {
+          position: relative;
+          display: block;
+          margin-bottom: 20px;
+        }
+
+        form input {
+          font: 18px Helvetica, Arial, sans-serif;
+          box-sizing: border-box;
+          border: 2px solid white;
+          color: white;
+          background: transparent;
+          display: block;
+          padding: 20px;
+          width: 300px;
+          height: 60px;
+          margin-bottom: 20px;
+          font-size: 18px;
+          outline: none;
+          transition: all 0.2s ease-in-out;
+        }
+
+        form input::placeholder {
+          transition: all 0.2s ease-in-out;
+          color: rgba(255,255,255,0.6);
+        }
+
+        form input:focus, form input:active {
+          box-shadow: inset 0 0 10px rgba(255,255,255,0.4);
+          color: rgba(255,255,255,1);
+        }
+
+        form input:focus, form input:active, form input.populated {
+          padding-top: 28px;
+          padding-bottom: 12px;
+        }
+
+        form input:focus + span {
+          opacity: 1;
+          top: 10px;
+        }
+
+        form span {
+          color: rgba(255,255,255,0.6);
+          font: 13px Helvetica, Arial, sans-serif;
+          position: absolute;
+          top: 0px;
+          left: 20px;
+          opacity: 0;
+          transition: all 0.2s ease-in-out;
+        }
+
+        form button {
+          transition: all 0.2s ease-in-out;
+          font: 18px Helvetica, Arial, sans-serif;
+          border: none;
+          background: #1aaf75;
+          color: #fff;
+          padding: 16px 40px;
+          cursor: pointer;
+          margin-top: 20px;
+        }
+
+        form button:hover {
+          background: #109f67;
+        }
+    </style>
+</head>
+<body>
+    <h1>Step 2</h1>
+    <h1>Now Please Upload Cost File</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <h3>After choosing file, please upload it</h3>
+        <button type="submit">Upload File</button>
+    </form>
+    
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
